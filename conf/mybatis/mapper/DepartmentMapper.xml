@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.teng.dao.DepartmentMapper">
+    <cache-ref namespace="com.teng.dao.EmployeeMapper"></cache-ref>
+
+    <resultMap id="myDept" type="com.teng.bean.Department">
+        <id column="dept_id" property="id"></id>
+        <result column="dept_name" property="departmentName"></result>
+    </resultMap>
+    <!--public Department getDeptById(Integer id);-->
+    <select id="getDeptById" resultMap="myDept">
+        select * from t_dept where id=#{id}
+    </select>
+
+
+    <!--嵌套结果集的方式，使用collection标签定义关联的集合类型的属性封装规则  -->
+    <resultMap id="myDeptPlus" type="com.teng.bean.Department">
+        <id column="dept_id" property="id"></id>
+        <result column="dept_name" property="departmentName"></result>
+        <collection property="employees" ofType="com.teng.bean.Employee">
+            <id column="emp_id" property="id"></id>
+            <result column="last_name" property="lastName"></result>
+            <result column="gender" property="gender"></result>
+            <result column="email" property="email"></result>
+            <association property="department" javaType="com.teng.bean.Department">
+                <id column="dept_id" property="id"></id>
+                <result column="dept_name" property="departmentName"></result>
+            </association>
+        </collection>
+    </resultMap>
+    <!--public Department getDeptByIdPlus(Integer id);-->
+    <select id="getDeptByIdPlus" resultMap="myDeptPlus">
+        SELECT d.`id` dept_id,d.`dept_name` dept_name,e.id emp_id,e.`last_name` last_name,
+        e.`gender` gender,e.`email` email FROM t_dept d LEFT JOIN t_employee e ON e.`dept_id` = d.`id`
+        WHERE d.id = #{id}
+    </select>
+
+
+
+    <resultMap id="myDeptStep" type="com.teng.bean.Department">
+        <id column="id" property="id"></id>
+        <result column="dept_name" property="departmentName"></result>
+        <collection property="employees" select="com.teng.dao.EmployeeMapperPlus.getEmpsByDeptId" column="id" fetchType="eager"></collection>
+    </resultMap>
+    <!--public Department getDeptByIdStep(Integer id);-->
+    <select id="getDeptByIdStep" resultMap="myDeptStep">
+        select * from t_dept where id=#{id};
+    </select>
+
+    <!-- 扩展：多列的值传递过去：
+			将多列的值封装map传递；
+			column="{key1=column1,key2=column2}"
+		fetchType="lazy"：表示使用延迟加载；
+				- lazy：延迟
+				- eager：立即
+	 -->
+
+
+</mapper>

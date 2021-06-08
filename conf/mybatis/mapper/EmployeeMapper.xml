@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.teng.dao.EmployeeMapper">
+
+    <!--public List<Employee> getEmployees();-->
+    <select id="getEmployees" resultType="com.teng.bean.Employee">
+        select * from t_employee
+    </select>
+
+    <!--public int reduceMoney(Employee employee);-->
+    <update id="reduceMoney">
+        update t_employee set money=money-#{money} where last_name=#{lastName}
+    </update>
+
+    <!--public int addMoney(Employee employee);-->
+    <update id="addMoney">
+        update t_employee set money=money+#{money} where last_name=#{lastName}
+    </update>
+
+    <!-- public int addEmp(Employee employee);-->
+    <insert id="addEmp">
+        insert into t_employee(last_name,gender,email) values(#{lastName},#{gender},#{email})
+    </insert>
+</mapper>
